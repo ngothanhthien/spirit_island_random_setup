@@ -80,7 +80,7 @@ const getRandomObject = (objects) =>
 
 <template>
   <div class="flex h-screen">
-    <div class="border-4 w-1/3 m-auto p-4 self-center">
+    <div class="w-full border-4 md:w-1/2 lg:w-1/3 m-auto p-4 self-center ">
       <select
         class="block text-gray-700 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
         name="animals"
