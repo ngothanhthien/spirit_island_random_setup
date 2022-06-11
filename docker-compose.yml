@@ -8,3 +8,4 @@ services:
       - "80:80"
     volumes:
       - ./dist/:/usr/local/apache2/htdocs/
+      - ./php/:/usr/local/apache2/htdocs/
