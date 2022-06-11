@@ -6,10 +6,11 @@ const router = createRouter({
     {
       path:'/',
       name:'Spirit Island random',
-      component: import('../view/SpiritIsland.vue'),
+      component:()=> import('../view/SpiritIsland.vue'),
     },{
       path:'/crawl',
-      component: import('../view/CrawlData.vue'),
+      name:'Crawl Data',
+      component:()=> import('../view/CrawlData.vue'),
     }
   ]
 })
