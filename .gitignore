@@ -9,9 +9,7 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
-.dist/assets
-.dist/*.html
-.dist/favicon.ico
+dist
 dist-ssr
 coverage
 *.local

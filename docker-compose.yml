@@ -2,10 +2,21 @@ version: "3.9"
 services:
   www:
     image: httpd
+    container_name: db
     restart: unless-stopped
     tty: true
     ports:
       - "80:80"
     volumes:
       - ./dist/:/usr/local/apache2/htdocs/
-      - ./php/:/usr/local/apache2/htdocs/
+  server_php:
+    image: php:7.4-apache
+    container_name: server_php
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8080:80"
+    volumes:
+      - ./php/:/var/www/html/
+
+  
