@@ -26,8 +26,16 @@ watch(
   () => crawl.result,
   async (result) => {
     if (result !== "") { 
-        const response=await fetch('https://api.geekdo.com/api/collections?ajax=1&comment=1&objectid=342942&objecttype=thing&oneperuser=0&pageid=1&rated=1&require_review=true&showcount=50&sort=review_tstamp');
-        console.log(response);
+        const params={
+          game_id: result,
+        };
+        const options = {
+          method: "POST",
+          body: JSON.stringify(params)
+        }
+        const response=await fetch('http://localhost:8080/crawl_geek.php',options);
+        const comment=await response.json();
+        console.log(comment);
     }
   }
 );
