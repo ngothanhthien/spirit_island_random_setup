@@ -1,9 +1,11 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { reactive, watch, ref } from "vue";
+import { delay } from "../logic/timer";
 const crawl = reactive({
   link: "",
   error: false,
   result: "",
+  final: [],
 });
 const regex = /(?<=boardgamegeek\.com\/boardgame\/)[0-9]*/;
 watch(
@@ -25,17 +27,45 @@ watch(
 watch(
   () => crawl.result,
   async (result) => {
-    if (result !== "") { 
-        const params={
-          game_id: result,
-        };
-        const options = {
+    if (result !== "") {
+      console.log(1);
+      const params = {
+        game_id: result,
+        page: 1,
+      };
+      while (true) {
+        let response = await fetch("http://localhost:8000/php/crawl_geek.php", {
           method: "POST",
-          body: JSON.stringify(params)
+          body: JSON.stringify(params),
+        });
+        response = await response.json();
+        if (response["errors"] != undefined) {
+          console.log(response["errors"]);
+          await delay(60000);
+          continue;
         }
-        const response=await fetch('http://localhost:8080/crawl_geek.php',options);
-        const comment=await response.json();
-        console.log(comment);
+        if (response["items"].length == 0) {
+          console.log('done');
+          break;
+        }
+        for (let i = 0; i < response["items"].length; i++) {
+          const user = response["items"][i]["user"];
+          if (user["country"] == "Vietnam") {
+            const rating = response["items"][i]["rating"];
+            const comment = response["items"][i]["textfield"]["comment"];
+            const res = {
+              country: user["country"] == "" ? "Không rõ" : user["country"],
+              name: user["username"],
+              comment: comment["rendered"],
+              rating: rating,
+            };
+            crawl.final.push(res);
+          }
+        }
+        await delay(5000);
+        params.page++;
+        console.log(params.page);
+      }
     }
   }
 );
@@ -51,5 +81,15 @@ watch(
       VD: https://boardgamegeek.com/boardgame/162886/spirit-island
     </div>
     <div v-if="crawl.error" class="text-red-400">Link không hợp lệ</div>
+    <div>
+      <div class="m-1 border inline-block" v-for="res in crawl.final">
+        <div>{{ res.country }}</div>
+        <a target="_blank" class="text-lime-500" :href="'https://boardgamegeek.com/user/'+res.name">{{
+          res.name
+        }}</a>
+        <div>{{ res.comment }}</div>
+        <div>{{ res.rating }}</div>
+      </div>
+    </div>
   </div>
 </template>

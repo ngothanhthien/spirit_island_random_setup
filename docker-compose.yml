@@ -1,22 +1,25 @@
-version: "3.9"
-services:
-  www:
-    image: httpd
-    container_name: db
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "80:80"
-    volumes:
-      - ./dist/:/usr/local/apache2/htdocs/
-  server_php:
-    image: php:7.4-apache
-    container_name: server_php
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "8080:80"
-    volumes:
-      - ./php/:/var/www/html/
+version: '3.8'
 
-  
+services:
+  app:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: geek_crawl-app
+    restart: always
+    working_dir: /var/www/
+    tty: true
+    volumes:
+      - ./php:/var/www/php
+      - ./dist:/var/www
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: geekcrawl-nginx
+    tty: true
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./php:/var/www/php
+      - ./dist:/var/www
+      - ./nginx:/etc/nginx/conf.d
